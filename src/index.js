@@ -19,9 +19,7 @@ export default class Audio {
       additionalData: config.additionalData || {},
       additionalHeaders: config.additionalHeaders || {},
       audioEndpoint: config.audioEndpoint || undefined,
-      thumbnailEndpoint: config.thumbnailEndpoint || undefined,
       audioUploader: config.audioUploader || undefined,
-      thumbnailUploader: config.thumbnailUploader || undefined,
     };
 
     this.ui = new Ui({
@@ -30,7 +28,6 @@ export default class Audio {
 
     this.block = this.ui.render();
 
-    this.thumbnailURL = 'test';
     this.audioURL = 'test';
   }
 
@@ -69,7 +66,6 @@ export default class Audio {
     return {
       name: blockContent.querySelector('#audio-file-name').value + blockContent.querySelector('#audio-extension-type').innerText,
       author: blockContent.querySelector('#audio-author').value,
-      thumbnailURL: this.thumbnailURL,
       audioURL: this.audioURL,
     };
   }

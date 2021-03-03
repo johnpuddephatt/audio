@@ -1,5 +1,5 @@
 {
-  "name": "audio",
+  "name": "editorjs-audio",
   "version": "1.0.0",
   "description": "Editor.js Tool for uploading audio files.",
   "main": "dist/main.js",
@@ -19,12 +19,8 @@
     "editorjs",
     "audio"
   ],
-  "author": "ranemihir",
+  "author": "John Puddephatt",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/editor-js/audio/issues"
-  },
-  "homepage": "https://github.com/editor-js/audio#readme",
   "devDependencies": {
     "@babel/core": "^7.11.0",
     "@babel/plugin-transform-runtime": "^7.11.0",

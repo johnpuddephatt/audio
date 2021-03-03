@@ -33,24 +33,6 @@ export default class Uploader {
   }
 
   /**
-   * upload thumbnail image file.
-   *
-   * @param {object} thumbnailFile - thumbnail image file.
-   * @returns {object} response.
-   */
-  async uploadThumbnail(thumbnailFile) {
-    let response;
-
-    if (this.config.thumbnailEndpoint) {
-      response = await this.uploadThumbnailToEndpoint(thumbnailFile);
-    } else if (this.config.thumbnailUploader) {
-      response = await this.uploadThumbnailUsingUploader(thumbnailFile);
-    }
-
-    return response;
-  }
-
-  /**
    * @param {object} file - audio file to be uploaded.
    */
   async uploadAudioToEndpoint(file) {
@@ -61,30 +43,10 @@ export default class Uploader {
 
   /**
    *
-   * @param {object} file - image file to be uploaded as audio thumbnail.
-   */
-  async uploadThumbnailToEndpoint(file) {
-    const response = await this.uploadToEndpoint(file, this.config.thumbnailEndpoint, this.config.additionalHeaders, this.config.additionalData);
-
-    return response;
-  }
-
-  /**
-   *
    * @param {object} file - audio file to be uploaded.
    */
   async uploadAudioUsingUploader(file) {
     return this.uploadUsingUploader(file, this.config.audioUploader);
-  }
-
-  /**
-   *
-   * @param {object} file - image file to be uploaded as audio thumbnail.
-   */
-  async uploadThumbnailUsingUploader(file) {
-    const response = await this.uploadUsingUploader(file, this.config.thumbnailUploader);
-
-    return response;
   }
 
   /**

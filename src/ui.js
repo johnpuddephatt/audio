@@ -98,7 +98,7 @@ export default class Ui {
           const response = await uiObj.uploader.uploadAudio(this.files[0]);
 
           if (response && response.success == 1) {
-            const audioBlock = uiObj.createAudioBlock(response.url);
+            const audioBlock = await uiObj.createAudioBlock(response.file.url);
 
             mainBlock.appendChild(audioBlock);
           } else {
@@ -124,148 +124,23 @@ export default class Ui {
   async createAudioBlock(audioFileURL) {
     // eslint-disable-next-line no-undef
     const response = await fetch(audioFileURL);
-    const result = await response.json();
+    let blob = await response.blob();
+
+    // console.log('response:', response);
+
+    // const result = await response.json();
+
+    // console.log('result:', result);
 
     const audioBlock = document.createElement('div');
 
     audioBlock.id = 'audio-block';
 
-    const thumbnailForm = this.createThumbnailUploadForm();
-    const audioMetadata = this.createAudioMetadata(result.audioFile.name);
-    const audioController = this.createAudioController(audioFileURL);
+    const audioController = this.createAudioController(blob);
 
-    audioBlock.appendChild(thumbnailForm);
-    audioBlock.appendChild(audioMetadata);
     audioBlock.appendChild(audioController);
 
     return audioBlock;
-  }
-
-  /**
-   * creates and returns form for uplaoding thumbnail images for the audio.
-   *
-   * @returns {object} - thumbnail upload form.
-   */
-  createThumbnailUploadForm() {
-    const thumbnailForm = document.createElement('form');
-
-    thumbnailForm.id = 'thumbnail-form';
-    thumbnailForm.enctype = 'multipart/form-data';
-
-    const thumbnailInput = document.createElement('input');
-
-    thumbnailInput.id = 'thumbnail-input';
-    thumbnailInput.name = 'thumbnail';
-    thumbnailInput.type = 'file';
-    thumbnailInput.accept = 'image/*';
-    thumbnailInput.style.display = 'none';
-
-    const thumbnailLabel = document.createElement('label');
-
-    thumbnailLabel.id = 'thumbnail-label';
-    thumbnailLabel.htmlFor = 'thumbnail-input';
-
-    const thumbnailUploadIcon = document.createElement('img');
-
-    thumbnailUploadIcon.id = 'thumbnail-upload-icon';
-    // thumbnailUploadIcon.src = ThumbnailUploadIcon;
-
-    const thumbnailUploadText = document.createElement('span');
-
-    thumbnailUploadText.id = 'thumbnail-upload-text';
-    thumbnailUploadText.textContent = 'Upload cover';
-
-    thumbnailLabel.appendChild(thumbnailUploadIcon);
-    thumbnailLabel.appendChild(thumbnailUploadText);
-
-    thumbnailForm.append(thumbnailLabel);
-    thumbnailForm.append(thumbnailInput);
-
-    const uiObj = this;
-
-    thumbnailInput.addEventListener('change', async function () {
-      if (this.files && this.files[0]) {
-        const response = await uiObj.uploader.uploadThumbnail(this.files[0]);
-
-        if (response && response.success == 1) {
-          const reader = new FileReader();
-
-          reader.onload = function (event) {
-            const thumbnailPreview = document.createElement('img');
-
-            thumbnailPreview.id = 'thumbnail-preview';
-            thumbnailPreview.src = event.target.result;
-
-            const thumbnailImageShadow = document.createElement('img');
-
-            thumbnailImageShadow.id = 'thumbnail-image-shadow';
-            thumbnailImageShadow.src = event.target.result;
-
-            thumbnailLabel.innerHTML = '';
-            thumbnailLabel.appendChild(thumbnailPreview);
-            thumbnailLabel.appendChild(thumbnailImageShadow);
-
-            if (document.getElementById('bg-image') != null) {
-              document.getElementById('bg-image').src = event.target.result;
-            } else {
-              const bgImage = document.createElement('img');
-
-              bgImage.id = 'bg-image';
-              bgImage.src = event.target.result;
-
-              const mainBlock = document.getElementById('main-block');
-
-              mainBlock.appendChild(bgImage);
-
-              const audioBlock = document.getElementById('audio-block');
-
-              audioBlock.style.backgroundImage = 'none';
-              audioBlock.style.backdropFilter = 'blur(5px)';
-
-              document.getElementById('thumbnail-form').classList.add('thumbnail-container');
-            }
-          };
-
-          reader.readAsDataURL(response.url);
-        } else {
-          // TODO: throw error as image not uploaded properly.
-        }
-      }
-    });
-
-    return thumbnailForm;
-  }
-
-  /**
-   * creates and returns editable blocks containing audio file name and its author name.
-   *
-   * @param {string} audioFileName - name of the audio file provided by the user.
-   * @returns {object} - audio metadata wrapper.
-   */
-  createAudioMetadata(audioFileName) {
-    const audioMetadata = document.createElement('div');
-
-    audioMetadata.id = 'audio-metadata';
-
-    const audioFileNameInput = document.createElement('input');
-
-    audioFileNameInput.id = 'audio-file-name';
-    audioFileNameInput.placeholder = 'Audio Name';
-    audioFileNameInput.value = audioFileName.split('.').slice(0, -1)
-      .join('.');
-    audioFileNameInput.type = 'text';
-
-    const audioAuthorInput = document.createElement('input');
-
-    audioAuthorInput.id = 'audio-author';
-    audioAuthorInput.placeholder = 'Author Name';
-    audioAuthorInput.value = 'Unknown';
-    audioAuthorInput.type = 'text';
-
-    audioMetadata.appendChild(audioFileNameInput);
-    audioMetadata.appendChild(audioAuthorInput);
-
-    return audioMetadata;
   }
 
   /**
@@ -274,7 +149,7 @@ export default class Ui {
    * @param {string} audioFileURL - URL to the audio file.
    * @returns {object} - audio controller wrapper.
    */
-  createAudioController(audioFileURL) {
+  createAudioController(audioBlob) {
     const audioController = document.createElement('div');
 
     audioController.id = 'audio-controller';
@@ -322,14 +197,14 @@ export default class Ui {
     audioController.appendChild(pauseBtn);
 
     const reader = new FileReader();
-    var audio;
+    let audio;
 
     reader.onload = function (event) {
       // eslint-disable-next-line no-undef
       audio = new Audio(event.target.result);
     };
 
-    reader.readAsDataURL(audioFileURL);
+    reader.readAsDataURL(audioBlob);
 
     playBtn.addEventListener('click', function () {
       this.style.display = 'none';

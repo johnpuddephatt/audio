@@ -46,28 +46,6 @@ class ServerExample {
       }
     });
 
-    this.app.post('/uploadThumbnail', this.upload.single('file'), (req, res) => {
-      try {
-        if (req.file) {
-          console.log(req.file);
-
-          res.send({
-            sucess: 1,
-            url: `http://localhost:${this.port}/`,
-          });
-        } else {
-          throw new Error('No file received');
-        }
-      } catch (error) {
-        console.error(error);
-
-        res.send({
-          success: 0,
-          url: null,
-        });
-      }
-    });
-
     this.app.listen(this.port, () => {
       console.log(`Example backend listening at http://localhost:${this.port}`);
       console.log(`Uploaded files will be stored at ${this.storageDirectory}`);
@@ -78,5 +56,5 @@ class ServerExample {
 // eslint-disable-next-line no-new
 new ServerExample({
   port: 3000,
-  storageDirectory: path.join(__dirname, '/\.tmp'),
+  storageDirectory: path.join(__dirname, '/.tmp'),
 });
