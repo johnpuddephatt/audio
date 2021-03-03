@@ -64,8 +64,6 @@ export default class Audio {
    */
   save(blockContent) {
     return {
-      name: blockContent.querySelector('#audio-file-name').value + blockContent.querySelector('#audio-extension-type').innerText,
-      author: blockContent.querySelector('#audio-author').value,
       audioURL: this.audioURL,
     };
   }
