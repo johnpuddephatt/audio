@@ -59,7 +59,7 @@ export default class Uploader {
     try {
       const formData = new FormData();
 
-      formData.append('file', file);
+      formData.append('audio', file);
 
       Object.entries(additionalData).forEach(([key, value]) => {
         formData[key] = value;
